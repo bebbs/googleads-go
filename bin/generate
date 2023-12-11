@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+echo "--- Generating services…"
+
+services=(
+  "ActivityGroupService"
+  "ActivityService"
+  "AdjustmentService"
+  "AdRuleService"
+  "AudienceSegmentService"
+  "CdnConfigurationService"
+  "CmsMetadataService"
+  "CompanyService"
+  "ContactService"
+  "ContentBundleService"
+  "ContentService"
+  "CreativeReviewService"
+  "CreativeService"
+  "CreativeSetService"
+  "CreativeTemplateService"
+  "CreativeWrapperService"
+  "CustomFieldService"
+  "CustomTargetingService"
+  "DaiAuthenticationKeyService"
+  "DaiEncodingProfileService"
+  "ForecastService"
+  "InventoryService"
+  "LabelService"
+  "LineItemCreativeAssociationService"
+  "LineItemService"
+  "LineItemTemplateService"
+  "LiveStreamEventService"
+  "MobileApplicationService"
+  "NativeStyleService"
+  "NetworkService"
+  "OrderService"
+  "PlacementService"
+  "ProposalLineItemService"
+  "ProposalService"
+  "PublisherQueryLanguageService"
+  "ReportService"
+  "SegmentPopulationService"
+  "SiteService"
+  "StreamActivityMonitorService"
+  "SuggestedAdUnitService"
+  "TargetingPresetService"
+  "TeamService"
+  "UserService"
+  "UserTeamAssociationService"
+  "YieldGroupService"
+)
+
+package_url="https://ads.google.com/apis/ads/publisher/v202311/:SERVICE_NAME?wsdl"
+
+for service in "${services[@]}"; do
+  service_url="${package_url/:SERVICE_NAME/$service}"
+
+  # Remove 'Service' suffix and convert to lowercase
+  package=$(echo "${service%Service}" | tr '[:upper:]' '[:lower:]')
+
+  echo "Generating package: $package"
+
+  gowsdl -o "$package.go" -p "$package" "$service_url"
+
+  echo "Fixing type definitions: $package"
+
+  generated_file_path="$package/$package.go"
+  sed -i 's/type Value struct {/type _Value struct {/g' "$generated_file_path"
+  sed -i 's/*Value/*_Value/g' "$generated_file_path"
+done
+
+echo "Done!"
