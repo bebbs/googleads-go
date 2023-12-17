@@ -1865,7 +1865,7 @@ type AdUnit struct {
 	// Specifies the source of {@link #adSenseSettings} value. To revert an overridden value to its
 	// default, set this field to {@link PropertySourceType#PARENT}.
 	//
-	AdSenseSettingsSource *_ValueSourceType `xml:"adSenseSettingsSource,omitempty" json:"adSenseSettingsSource,omitempty"`
+	AdSenseSettingsSource *ValueSourceType `xml:"adSenseSettingsSource,omitempty" json:"adSenseSettingsSource,omitempty"`
 
 	//
 	// The set of label frequency caps applied directly to this ad unit. There is a limit of 10 label
